@@ -4,24 +4,43 @@ import Cart from "@/app/_components/cart";
 import DeliveryInfo from "@/app/_components/delivery-info";
 import DiscountBadge from "@/app/_components/discount-badge";
 import ProductList from "@/app/_components/product-list";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/app/_components/ui/alert-dialog";
 import { Button } from "@/app/_components/ui/button";
-import { SheetContent, SheetHeader, SheetTitle } from "@/app/_components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "@/app/_components/ui/sheet";
 import { CartContext } from "@/app/_context/cart";
 import {
-  calculateProductTotalPrice,
   formatCurrency,
+  calculateProductTotalPrice,
 } from "@/app/_helpers/price";
 import { Prisma } from "@prisma/client";
-import { ChevronLeftIcon, ChevronRightIcon, Sheet } from "lucide-react";
+import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import Image from "next/image";
 import { useContext, useState } from "react";
 
 interface ProductDetailsProps {
   product: Prisma.ProductGetPayload<{
-    include: { restaurant: true };
+    include: {
+      restaurant: true;
+    };
   }>;
   complementaryProducts: Prisma.ProductGetPayload<{
-    include: { restaurant: true };
+    include: {
+      restaurant: true;
+    };
   }>[];
 }
 
@@ -37,7 +56,7 @@ const ProductDetails = ({
   const { addProductToCart, products } = useContext(CartContext);
 
   const addToCart = ({ emptyCart }: { emptyCart?: boolean }) => {
-    addProductToCart({ product, quantity, emptyCart });
+    addProductToCart({ product: { ...product, quantity }, emptyCart });
     setIsCartOpen(true);
   };
 
@@ -75,9 +94,8 @@ const ProductDetails = ({
             <Image
               src={product.restaurant.imageUrl}
               alt={product.restaurant.name}
-              width={16}
-              height={16}
-              className="rounded-full"
+              fill
+              className="rounded-full object-cover"
             />
           </div>
           <span className="text-xs text-muted-foreground">
@@ -135,14 +153,14 @@ const ProductDetails = ({
           <p className="text-sm text-muted-foreground">{product.description}</p>
         </div>
 
-        <div className="mt-6 space-y-3 px-5">
+        <div className="mt-6 space-y-3">
           <h3 className="px-5 font-semibold">Sucos</h3>
           <ProductList products={complementaryProducts} />
         </div>
 
         <div className="mt-6 px-5">
-          <Button 
-            className="w-full font-semibold" 
+          <Button
+            className="w-full font-semibold"
             onClick={handleAddToCartClick}
           >
             Adicionar à sacola
@@ -160,6 +178,28 @@ const ProductDetails = ({
         </SheetContent>
       </Sheet>
 
+      <AlertDialog
+        open={isConfirmationDialogOpen}
+        onOpenChange={setIsConfirmationDialogOpen}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              Você só pode adicionar itens de um restaurante por vez
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              Deseja mesmo adicionar esse produto? Isso limpará sua sacola
+              atual.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={() => addToCart({ emptyCart: true })}>
+              Esvaziar sacola e adicionar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 };
