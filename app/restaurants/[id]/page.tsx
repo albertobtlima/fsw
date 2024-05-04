@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import RestaurantImage from "./_components/restaurant-image";
 import Image from "next/image";
 import DeliveryInfo from "@/app/_components/delivery-info";
+import CartBanner from "./_components/cart-banner";
 
 interface RestaurantPageProps {
   params: {
@@ -91,6 +92,7 @@ const RestaurantPage = async ({ params: { id } }: RestaurantPageProps) => {
       ))}
 
       {/*<CartBanner restaurant={restaurant} />*/}
+      <CartBanner restaurant={restaurant} />
     </div>
   );
 };
