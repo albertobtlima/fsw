@@ -9,7 +9,13 @@ import { cn } from "../_lib/utils";
 
 interface ProductItemProps {
   product: Prisma.ProductGetPayload<{
-    include: { restaurant: { select: { name: true } } };
+    include: {
+      restaurant: {
+        select: {
+          name: true;
+        };
+      };
+    };
   }>;
   className?: string;
 }
@@ -26,14 +32,12 @@ const ProductItem = ({ product, className }: ProductItemProps) => {
             src={product.imageUrl}
             alt={product.name}
             fill
+            sizes="100%"
             className="rounded-lg object-cover shadow-md"
           />
 
           {product.discountPercentage && (
-            <div
-              className="absolute left-2 top-2 flex items-center gap-[2px] 
-              rounded-full bg-primary px-1 py-[2px] text-white"
-            >
+            <div className="absolute left-2 top-2 flex items-center gap-[2px] rounded-full bg-primary px-2 py-[2px] text-white">
               <ArrowDownIcon size={12} />
               <span className="text-xs font-semibold">
                 {product.discountPercentage}%

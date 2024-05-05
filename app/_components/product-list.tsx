@@ -3,7 +3,13 @@ import ProductItem from "./product-item";
 
 interface ProductListProps {
   products: Prisma.ProductGetPayload<{
-    include: { restaurant: { select: { name: true } } };
+    include: {
+      restaurant: {
+        select: {
+          name: true;
+        };
+      };
+    };
   }>[];
 }
 
